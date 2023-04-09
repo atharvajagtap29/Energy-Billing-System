@@ -133,7 +133,7 @@ public class NewCustomer extends JFrame implements ActionListener {
 			if (name.length() != 0 && meter.length() != 0 && address.length() != 0 && city.length() != 0
 					&& state.length() != 0 && email.length() != 0 && phone.length() != 0) {
 
-				if (email.contains("@") && email.endsWith(".com") && phone.length() == 10 || phone.length() == 13) {
+				if (email.contains("@") && email.endsWith(".com") && phone.length() == 10 && phone.matches("[0-9]+")) {
 
 					try {
 
@@ -158,8 +158,10 @@ public class NewCustomer extends JFrame implements ActionListener {
 
 				else if (!email.contains("@") || !email.endsWith(".com")) {
 					JOptionPane.showMessageDialog(null, "Invalid email. Try again");
-				} else if (phone.length() != 10 || phone.length() != 13) {
-					JOptionPane.showMessageDialog(null, "Invalid phone number. Try again");
+				} else if (phone.length() != 10) {
+					JOptionPane.showMessageDialog(null, "Invalid phone number length!");
+				} else if(!phone.matches("[0-9]+")) {
+					JOptionPane.showMessageDialog(null, "Phone number should consist only integers!");
 				}
 			} else {
 				JOptionPane.showMessageDialog(null, "All fields must be filled");
