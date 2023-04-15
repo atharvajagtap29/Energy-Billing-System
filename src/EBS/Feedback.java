@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -31,11 +33,15 @@ public class Feedback extends JFrame implements ActionListener {
 
 	String meter, atype, fullName;
 
+	int intMeter;
+
 	public Feedback(String meter, String atype, String fullName) {
 		// TODO Auto-generated constructor stub
 		super("USER FEEDBACK");
 
-		this.meter = meter;
+		int intMeter = Integer.parseInt(meter); // converting string to integer as meter number is a primary key in database
+		this.intMeter = intMeter;
+		// this.meter = meter;
 		this.atype = atype;
 		this.fullName = fullName;
 
@@ -58,7 +64,6 @@ public class Feedback extends JFrame implements ActionListener {
 		txt.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		txt.setBounds(10, 60, 1000, 45);
 		p.add(txt);
-
 
 		// question 1
 		JLabel q1 = new JLabel("1) How would you rate your experience using this app?");
@@ -296,7 +301,8 @@ public class Feedback extends JFrame implements ActionListener {
 				que5 = group5.getSelection().getActionCommand();
 
 			} catch (Exception ae) {
-				proceed = false;  // if user does not answer all the questions of the form proceed will be set to false, and if proceed is false it wont go further
+				proceed = false; // if user does not answer all the questions of the form proceed will be set to
+									// false, and if proceed is false it wont go further
 				System.out.println("User did not answer all the questions");
 				JOptionPane.showMessageDialog(null, "All questions must be answered");
 			}
@@ -304,7 +310,7 @@ public class Feedback extends JFrame implements ActionListener {
 			if (proceed != false) {
 				try {
 
-					String query = "insert into feedback values('" + fullName + "', '" + meter + "', '" + atype
+					String query = "insert into feedback values('" + intMeter + "', '" + fullName + "', '" + atype
 							+ "', '" + que1 + "', '" + que2 + "', '" + que3 + "', '" + que4 + "', '" + que5 + "')";
 
 					Conn c = new Conn();
@@ -313,9 +319,15 @@ public class Feedback extends JFrame implements ActionListener {
 					JOptionPane.showMessageDialog(null, "Your response added successfully!");
 					setVisible(false);
 
-				}
-
-				catch (Exception ae) {
+				} catch (SQLIntegrityConstraintViolationException ae) {
+					
+					// catching duplicate entry exception in this catch block
+					
+					//ae.printStackTrace();
+					System.out.println("caught");
+					JOptionPane.showMessageDialog(null, "You have already responded!");
+					
+				} catch (SQLException ae) {
 					ae.printStackTrace();
 				}
 			}
